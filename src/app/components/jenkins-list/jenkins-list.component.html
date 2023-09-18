@@ -1,0 +1,29 @@
+<div class="jenkins-list-container">
+    <div class="create-job-button">
+      <button routerLink="/create-job">Créer un nouveau job</button>
+    </div>
+    <h2>Liste des jobs Jenkins</h2>
+    <table class="job-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>URL</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let job of jobs">
+          <td>{{ job.name }}</td>
+          <td>{{ job.url }}</td>
+          <td><span [ngClass]="job.color">{{ job.color }}</span></td>
+          <td>
+            <!-- <i class="fas fa-play text-success fa-fw" (click)="launchJob(job)"></i> -->
+            <i class="fas fa-edit text-warning" (click)="editJob(job)"></i>
+            <i class="fas fa-trash-alt text-danger fa-fw" (click)="openDeleteConfirmationDialog(job)"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

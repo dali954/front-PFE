@@ -1,0 +1,26 @@
+<div class="create-job-container">
+    <h2>Créer job Jenkins</h2>
+    <form (submit)="createJob()">
+        <div class="form-group">
+            <label for="jobName">Nom du job:</label>
+            <input type="text" id="jobName" class="form-control" [(ngModel)]="newJob.jobName" name="jobName" required
+                (keyup)="checkJobNameExists(newJob.jobName)">
+            <!-- Affichage du message d'erreur si jobNameExists est vrai -->
+            <div *ngIf="jobNameExists" class="error-message">
+                Le nom de l'emploi existe déjà.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="gitLabUrl">URL du projet GitLab:</label>
+            <input type="text" id="gitLabUrl" class="form-control" [(ngModel)]="newJob.gitLabUrl" name="gitLabUrl" required>
+        </div>
+        <div class="form-group">
+            <label for="branch">Branch:</label>
+            <select id="branch" class="form-control" [(ngModel)]="newJob.branch" name="branch" required>
+                <option value="main">main</option>
+                <option value="branch">master</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="jobNameExists || !newJob.jobName || !newJob.gitLabUrl || !newJob.branch">Créer</button>
+    </form>
+</div>
