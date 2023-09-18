@@ -1,0 +1,38 @@
+node {
+    stage('checkout'){
+     checkout scm
+   }             
+    def String cloudconfig_version 
+  docker.image('node:18.17.1-buster').inside("-u root -v $HOME/.m2:/root/.m2 --entrypoint=''") {
+            try {              
+                    stage('check node') {
+                        sh "npm --version"
+                    }             
+                    stage('install') {
+                        sh "npm install"
+                    }
+                    stage('build') {
+                    sh "npm run build"            
+                    }
+      script{
+             stage('docker build'){
+                def packageJson = readJSON file: 'package.json'
+                cloudconfig_version = packageJson.version
+                docker.withRegistry('https://nexus-numeryx.my.p4d.click', 'docker-login') {
+                  def dockerImageTag =  "nexus-numeryx.my.p4d.click/business-suite/mac/front-gestion-utilisateur:"+cloudconfig_version
+                  def dockerImage = docker.build(dockerImageTag, './')
+                  dockerImage.push()
+                    }
+                }     
+            stage('integration') {
+               sshagent (credentials: ['ssh-cluster-app-bs-dev']) {
+                       sh "ssh root@10.30.2.49 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o CheckHostIP=no sh /root/deploy.sh"
+                  }}    
+         }
+         finally {
+                sh "chmod -R 777 ."
+            }
+  }
+
+  
+}}
